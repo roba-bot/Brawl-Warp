@@ -6,11 +6,234 @@ class WarpConfigGenerator {
             installId: null,
             fcmToken: null
         };
-        
+        this.stealth = {
+            s1: 0, s2: 0, jc: 120, jmin: 23, jmax: 911,
+            h1: 1, h2: 2, h3: 3, h4: 4,
+            i1: "0xce000000010897a297ecc34cd6dd000044d0ec2e2e1ea2991f467ace4222129b5a098823784694b4897b9986ae0b7280135fa85e196d9ad980b150122129ce2a9379531b0fd3e871ca5fdb883c369832f730e272d7b8b74f393f9f0fa43f11e510ecb2219a52984410c204cf875585340c62238e14ad04dff382f2c200e0ee22fe743b9c6b8b043121c5710ec289f471c91ee414fca8b8be8419ae8ce7ffc53837f6ade262891895f3f4cecd31bc93ac5599e18e4f01b472362b8056c3172b513051f8322d1062997ef4a383b01706598d08d48c221d30e74c7ce000cdad36b706b1bf9b0607c32ec4b3203a4ee21ab64df336212b9758280803fcab14933b0e7ee1e04a7becce3e2633f4852585c567894a5f9efe9706a151b615856647e8b7dba69ab357b3982f554549bef9256111b2d67afde0b496f16962d4957ff654232aa9e845b61463908309cfd9de0a6abf5f425f577d7e5f6440652aa8da5f73588e82e9470f3b21b27b28c649506ae1a7f5f15b876f56abc4615f49911549b9bb39dd804fde182bd2dcec0c33bad9b138ca07d4a4a1650a2c2686acea05727e2a78962a840ae428f55627516e73c83dd8893b02358e81b524b4d99fda6df52b3a8d7a5291326e7ac9d773c5b43b8444554ef5aea104a738ed650aa979674bbed38da58ac29d87c29d387d80b526065baeb073ce65f075ccb56e47533aef357dceaa8293a523c5f6f790be90e4731123d3c6152a70576e90b4ab5bc5ead01576c68ab633ff7d36dcde2a0b2c68897e1acfc4d6483aaaeb635dd63c96b2b6a7a2bfe042f6aed82e5363aa850aace12ee3b1a93f30d8ab9537df483152a5527faca21efc9981b304f11fc95336f5b9637b174c5a0659e2b22e159a9fed4b8e93047371175b1d6d9cc8ab745f3b2281537d1c75fb9451871864efa5d184c38c185fd203de206751b92620f7c369e031d2041e152040920ac2c5ab5340bfc9d0561176abf10a147287ea90758575ac6a9f5ac9f390d0d5b23ee12af583383d994e22c0cf42383834bcd3ada1b3825a0664d8f3fb678261d57601ddf94a8a68a7c273a18c08aa99c7ad8c6c42eab67718843597ec9930457359dfdfbce024afc2dcf9348579a57d8d3490b2fa99f278f1c37d87dad9b221acd575192ffae1784f8e60ec7cee4068b6b988f0433d96d6a1b1865f4e155e9fe020279f434f3bf1bd117b717b92f6cd1cc9bea7d45978bcc3f24bda631a36910110a6ec06da35f8966c9279d130347594f13e9e07514fa370754d1424c0a1545c5070ef9fb2acd14233e8a50bfc5978b5bdf8bc1714731f798d21e2004117c61f2989dd44f0cf027b27d4019e81ed4b5c31db347c4a3a4d85048d7093cf16753d7b0d15e078f5c7a5205dc2f87e330a1f716738dce1c6180e9d02869b5546f1c4d2748f8c90d9693cba4e0079297d22fd61402dea32ff0eb69ebd65a5d0b687d87e3a8b2c42b648aa723c7c7daf37abcc4bb85caea2ee8f55bec20e913b3324ab8f5c3304f820d42ad1b9f2ffc1a3af9927136b4419e1e579ab4c2ae3c776d293d397d575df181e6cae0a4ada5d67ecea171cca3288d57c7bbdaee3befe745fb7d634f70386d873b90c4d6c6596bb65af68f9e5121e67ebf0d89d3c909ceedfb32ce9575a7758ff080724e1ab5d5f43074ecb53a479af21ed03d7b6899c36631c0166f9d47e5e1d4528a5d3d3f744029c4b1c190cbfbad06f5f83f7ad0429fa9a2719c56ffe3783460e166de2d8"
+        };
         this.init();
     }
 
     init() {
+        this.attachEventListeners();
+        this.setupModal();
+        this.pingTestServers();
+    }
+
+    attachEventListeners() {
+        document.querySelectorAll('.config-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const configType = e.currentTarget.dataset.config;
+                this.generateConfig(configType);
+            });
+        });
+        document.getElementById('copyThroneBtn').addEventListener('click', () => {
+            this.copyThroneConfig();
+        });
+    }
+
+    setupModal() {
+        const modal = document.getElementById('throneModal');
+        const closeBtn = modal.querySelector('.close');
+        closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('show');
+        });
+    }
+
+    pingTestServers() {
+        const servers = [
+            { id: 'default', host: '162.159.192.1', port: 500, name: 'По умолчанию' },
+            { id: 'pl', host: 'pl.tribukvy.ltd', port: 500, name: ' Польша' },
+            { id: 'de', host: 'de.tribukvy.ltd', port: 500, name: ' Германия' },
+            { id: 'ru', host: 'ru0.tribukvy.ltd', port: 500, name: ' Россия' },
+            { id: 'ee', host: 'ee.tribukvy.ltd', port: 500, name: ' Эстония' },
+            { id: 'nl1', host: 'nl0.tribukvy.ltd', port: 500, name: ' Нидерланды 1' },
+            { id: 'nl2', host: 'nl.tribukvy.ltd', port: 500, name: ' Нидерланды 2' },
+            { id: 'fi1', host: 'fi0.tribukvy.ltd', port: 500, name: ' Финляндия 1' },
+            { id: 'fi2', host: 'fi.tribukvy.ltd', port: 500, name: ' Финляндия 2' }
+        ];
+        let pingSection = document.getElementById('ping-section') || this.createPingUI();
+        const resultsContainer = pingSection.querySelector('.ping-results');
+        const statusEl = pingSection.querySelector('.ping-status');
+        
+        Promise.all(servers.map(async s => {
+            const latency = await this.testServerLatency(s);
+            this.displayPingResult(s, latency, resultsContainer);
+        })).then(() => {
+            statusEl.textContent = 'Тест завершен';
+            this.highlightBestServer(resultsContainer);
+        });
+    }
+
+    createPingUI() {
+        const pingSection = document.createElement('section');
+        pingSection.id = 'ping-section';
+        pingSection.className = 'ping-section';
+        pingSection.innerHTML = `<h2>Тест пинга</h2><div class="ping-status">Измерение...</div><div class="ping-results"></div><button onclick="location.reload()">Обновить</button>`;
+        const serverSection = document.querySelector('.server-section');
+        if (serverSection) serverSection.parentNode.insertBefore(pingSection, serverSection.nextSibling);
+        return pingSection;
+    }
+
+    async testServerLatency(server) {
+        const startTime = performance.now();
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+            await fetch(`http://${server.host}:${server.port}`, { method: 'HEAD', mode: 'no-cors', signal: controller.signal, cache: 'no-store' }).catch(() => {});
+            clearTimeout(timeoutId);
+            return Math.round(performance.now() - startTime);
+        } catch (e) { return 999; }
+    }
+
+    displayPingResult(server, latency, container) {
+        let resultEl = container.querySelector(`[data-server-id="${server.id}"]`);
+        if (!resultEl) {
+            resultEl = document.createElement('div');
+            resultEl.className = 'ping-result-item';
+            resultEl.setAttribute('data-server-id', server.id);
+            container.appendChild(resultEl);
+        }
+        const lClass = latency < 50 ? 'excellent' : latency < 100 ? 'good' : latency < 200 ? 'fair' : 'poor';
+        resultEl.innerHTML = `<span class="ping-server-name">${server.name}</span><span class="ping-latency ${lClass}">${latency >= 999 ? 'Timeout' : latency + 'ms'}</span>`;
+    }
+
+    highlightBestServer(container) {
+        const items = Array.from(container.querySelectorAll('.ping-result-item'));
+        let best = { lat: Infinity, el: null };
+        items.forEach(item => {
+            const lat = parseInt(item.querySelector('.ping-latency').textContent);
+            if (!isNaN(lat) && lat < best.lat) { best.lat = lat; best.el = item; }
+        });
+        if (best.el) {
+            best.el.classList.add('best-server');
+            const b = document.createElement('span'); b.className = 'best-badge'; b.textContent = 'Лучший';
+            best.el.appendChild(b);
+        }
+    }
+
+    getSelectedDNS() {
+        const sel = document.querySelector('input[name="dns"]:checked');
+        return sel && sel.value === '1.1.1.1' ? "1.1.1.1, 1.0.0.1, 2606:4700:4700::1111, 2606:4700:4700::1001" : "8.8.8.8, 8.8.4.4, 2001:4860:4860::8888, 2001:4860:4860::8844";
+    }
+
+    getSelectedServer() {
+        const sel = document.querySelector('input[name="server"]:checked');
+        return sel ? sel.value : 'default';
+    }
+
+    generateRandomEndpoint() {
+        const ports = [500, 854, 880, 903, 943, 4500, 8854];
+        const port = ports[Math.floor(Math.random() * ports.length)];
+        const server = this.getSelectedServer();
+        const map = { 'pl': 'pl.tribukvy.ltd', 'de': 'de.tribukvy.ltd', 'ru': 'ru0.tribukvy.ltd', 'ee': 'ee.tribukvy.ltd', 'nl1': 'nl0.tribukvy.ltd', 'nl2': 'nl.tribukvy.ltd', 'fi1': 'fi0.tribukvy.ltd', 'fi2': 'fi.tribukvy.ltd' };
+        return server === 'default' ? `162.159.192.${Math.floor(Math.random() * 10) + 1}:${port}` : `${map[server] || 'de.tribukvy.ltd'}:${port}`;
+    }
+
+    generateRandomString(len) {
+        return Array.from({ length: len }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('');
+    }
+
+    async fetchWithTimeout(url, opts = {}, timeout = 3000) {
+        const ctrl = new AbortController();
+        const id = setTimeout(() => ctrl.abort(), timeout);
+        try {
+            const resp = await fetch(url, { ...opts, signal: ctrl.signal });
+            clearTimeout(id); return resp;
+        } catch (e) { clearTimeout(id); throw e; }
+    }
+
+    async fetchKeys() {
+        if (this.sessionCache.keys) return this.sessionCache.keys;
+        const urls = ['https://keygen.warp-generator.workers.dev', 'https://warp-generation.vercel.app/keys'];
+        for (const url of urls) {
+            try {
+                const resp = await this.fetchWithTimeout(url);
+                const data = await resp.text();
+                return this.sessionCache.keys = { publicKey: this.extractKey(data, 'PublicKey'), privateKey: this.extractKey(data, 'PrivateKey') };
+            } catch (e) {}
+        }
+        const b = new Uint8Array(32); crypto.getRandomValues(b);
+        return this.sessionCache.keys = { publicKey: btoa(String.fromCharCode(...b)), privateKey: btoa(String.fromCharCode(...b)) };
+    }
+
+    async fetchAccount(pub, inst, fcm) {
+        if (this.sessionCache.accountData) return this.sessionCache.accountData;
+        const urls = ['https://www.warp-generator.workers.dev/wg', 'https://warp-generation.vercel.app/wg'];
+        for (const url of urls) {
+            try {
+                const resp = await this.fetchWithTimeout(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: pub, install_id: inst, fcm_token: fcm, tos: new Date().toISOString(), model: 'PC' }) });
+                return this.sessionCache.accountData = await resp.json();
+            } catch (e) {}
+        }
+        return { config: { client_id: btoa(inst).slice(0, 22), interface: { addresses: { v4: "172.16.0.2/32", v6: "2606:4700:110:89c5:d840:3edf:bdb3:3bd7/128" } }, peers: [{ public_key: "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=", allowed_ips: ["0.0.0.0/0", "::/0"] }] } };
+    }
+
+    extractKey(data, name) {
+        const m = data.match(new RegExp(`${name}:\\s(.+)`));
+        return m ? m[1].trim() : null;
+    }
+
+    generateReserved(cid) {
+        return Array.from(atob(cid)).map(c => c.charCodeAt(0)).slice(0, 3).join(', ');
+    }
+
+    downloadConfig(name, blob) {
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([blob])); a.download = name; a.click();
+    }
+
+    async generateConfig(type) {
+        document.getElementById('loadingOverlay')?.classList.add('show');
+        try {
+            const keys = await this.fetchKeys();
+            const inst = this.generateRandomString(22);
+            const acc = await this.fetchAccount(keys.publicKey, inst, `${inst}:APA91b${this.generateRandomString(134)}`);
+            const dns = this.getSelectedDNS();
+            const end = this.generateRandomEndpoint();
+            const num = Math.floor(Math.random() * 90) + 10;
+            let cfg, name;
+
+            switch (type) {
+                case 'awg': case 'awgm1': case 'awgm2': case 'awgm3':
+                    name = `WARP_IDEAL_${num}.conf`; cfg = this.buildAWG(keys.privateKey, acc, dns, end); break;
+                case 'clash':
+                    name = `Clash_IDEAL_${num}.yaml`; cfg = this.buildClash(keys.privateKey, acc, end); break;
+                case 'throne':
+                    this.showThrone(keys.privateKey, acc); return;
+                default: return;
+            }
+            this.downloadConfig(name, cfg);
+        } catch (e) { console.error(e); } finally { document.getElementById('loadingOverlay')?.classList.remove('show'); }
+    }
+
+    buildAWG(priv, acc, dns, end) {
+        const s = this.stealth;
+        return `[Interface]\nPrivateKey = ${priv}\nAddress = ${acc.config.interface.addresses.v4}, ${acc.config.interface.addresses.v6}\nDNS = ${dns}\nMTU = 1280\nS1 = ${s.s1}\nS2 = ${s.s2}\nJc = ${s.jc}\nJmin = ${s.jmin}\nJmax = ${s.jmax}\nH1 = ${s.h1}\nH2 = ${s.h2}\nH3 = ${s.h3}\nH4 = ${s.h4}\nI1 = <b ${s.i1}>\n\n[Peer]\nPublicKey = ${acc.config.peers[0].public_key}\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ${end}\nPersistentKeepalive = 20`;
+    }
+
+    buildClash(priv, acc, end) {
+        const res = this.generateReserved(acc.config.client_id);
+        const s = this.stealth;
+        const [h, p] = end.split(':');
+        return `proxies:\n  - name: "WARP-IDEAL"\n    type: wireguard\n    ip: ${acc.config.interface.addresses.v4.split('/')[0]}\n    ipv6: ${acc.config.interface.addresses.v6.split('/')[0]}\n    private-key: ${priv}\n    public-key: ${acc.config.peers[0].public_key}\n    reserved: [${res}]\n    mtu: 1280\n    server: ${h}\n    port: ${p}\n    amnezia-wg-option:\n      s1: ${s.s1}\n      s2: ${s.s2}\n      jc: ${s.jc}\n      jmin: ${s.jmin}\n      jmax: ${s.jmax}\n      h1: ${s.h1}\n      h2: ${s.h2}\n      h3: ${s.h3}\n      h4: ${s.h4}\n      i1: <b ${s.i1}>`;
+    }
+
+    showThrone(priv, acc) {
+        const res = this.generateReserved(acc.config.client_id).replace(/, /g, '-');
+        const s = this.stealth;
+        const url = `wg://162.159.192.1:500?private_key=${encodeURIComponent(priv)}&peer_public_key=bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo%3D&reserved=${res}&mtu=1280&enable_amnezia=true&junk_packet_count=${s.jc}&junk_packet_min_size=${s.jmin}&junk_packet_max_size=${s.jmax}&init_packet_magic_header=1&response_packet_magic_header=2&underload_packet_magic_header=3&transport_packet_magic_header=4#WARP_IDEAL`;
+        const el = document.getElementById('throneText'); if (el) el.value = url;
+        document.getElementById('throneModal')?.classList.add('show');
+    }
+
+    copyThroneConfig() {
+        const el = document.getElementById('throneText');
+        el.select(); document.execCommand('copy');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => new WarpConfigGenerator()); init() {
         this.attachEventListeners();
         this.setupModal();
         this.pingTestServers();
