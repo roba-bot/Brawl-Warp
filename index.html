@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WARP Config Generator for Brawl Stars</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="favicon.ico" alt="Logo" class="logo">
+                <h1>WARP Config Generator</h1>
+                <p>for Brawl Stars</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="dns-section">
+                <h2>Выбор DNS</h2>
+                <div class="dns-options">
+                    <label class="dns-option">
+                        <input type="radio" name="dns" value="1.1.1.1" checked>
+                        <span class="dns-label">Cloudflare (1.1.1.1)</span>
+                    </label>
+                    <label class="dns-option">
+                        <input type="radio" name="dns" value="8.8.8.8">
+                        <span class="dns-label">Google (8.8.8.8)</span>
+                    </label>
+                </div>
+            </section>
+            <section class="server-section">
+                <h2>Выбор сервера</h2>
+                <div class="server-options">
+                    <label class="server-option">
+                        <input type="radio" name="server" value="default" checked>
+                        <span class="server-label">По умолчанию</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="pl">
+                        <span class="server-label">🇵🇱 Польша</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="de">
+                        <span class="server-label">🇩🇪 Германия</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="ru">
+                        <span class="server-label">🇷🇺 Россия</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="ee">
+                        <span class="server-label">🇪🇪 Эстония</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="nl1">
+                        <span class="server-label">🇳🇱 Нидерланды 1</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="nl2">
+                        <span class="server-label">🇳🇱 Нидерланды 2</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="fi1">
+                        <span class="server-label">🇫🇮 Финляндия 1</span>
+                    </label>
+                    <label class="server-option">
+                        <input type="radio" name="server" value="fi2">
+                        <span class="server-label">🇫🇮 Финляндия 2</span>
+                    </label>
+                </div>
+            </section>
+            <section class="config-section">
+                <h2>Генерация конфигураций</h2>
+                <div class="config-buttons">
+                    <button class="config-btn awg-btn" data-config="awg">
+                        <span class="btn-icon">🔧</span>
+                        <span class="btn-text">AWG</span>
+                    </button>
+                    <button class="config-btn awgm1-btn" data-config="awgm1">
+                        <span class="btn-icon">⚡</span>
+                        <span class="btn-text">AWG m1</span>
+                    </button>
+                    <button class="config-btn awgm2-btn" data-config="awgm2">
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">AWG m2</span>
+                    </button>
+                    <button class="config-btn awgm3-btn" data-config="awgm3">
+                        <span class="btn-icon">🔥</span>
+                        <span class="btn-text">AWG m3</span>
+                    </button>
+                    <button class="config-btn clash-btn" data-config="clash">
+                        <span class="btn-icon">⚔️</span>
+                        <span class="btn-text">Clash</span>
+                    </button>
+                    <button class="config-btn throne-btn" data-config="throne">
+                        <span class="btn-icon">👑</span>
+                        <span class="btn-text">Throne</span>
+                    </button>
+                    <button class="config-btn neko-btn" data-config="neko">
+                        <span class="btn-icon">🐱</span>
+                        <span class="btn-text">Neko</span>
+                    </button>
+                    <button class="config-btn husi-btn" data-config="husi">
+                        <span class="btn-icon">🌊</span>
+                        <span class="btn-text">Husi</span>
+                    </button>
+                    <button class="config-btn karing-btn" data-config="karing">
+                        <span class="btn-icon">🐱</span>
+                        <span class="btn-text">Karing</span>
+                    </button>
+                    <button class="config-btn wiresock-btn" data-config="wiresock">
+                        <span class="btn-icon">🧦</span>
+                        <span class="btn-text">WireSock</span>
+                    </button>
+                </div>
+            </section>
+            <section class="status-section">
+                <div id="status" class="status-message"></div>
+            </section>
+        </main>
+        <div id="throneModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Throne Configuration</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <textarea id="throneText" readonly></textarea>
+                    <button id="copyThroneBtn" class="copy-btn">Копировать</button>
+                </div>
+            </div>
+        </div>
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Генерация конфигурации...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
